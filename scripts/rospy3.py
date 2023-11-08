@@ -4,6 +4,7 @@ import rospy
 
 class TEST:
     def __init__(self):
+        print("Let's test")
         print("Test Python3 working in ROS")
 
 

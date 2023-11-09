@@ -6,7 +6,7 @@ from geometry_msgs.msg import Pose
 
 
 class NODE_1:
-    def __init__(self, start, goal) -> None:
+    def __init__(self, start: tuple, goal: tuple) -> None:
         self.start = start
         self.goal = goal
         self.robot = Pose()
@@ -14,7 +14,11 @@ class NODE_1:
         self.pub_robot = rospy.Publisher('/robotpose', Pose, queue_size=10)
         self.rate = rospy.Rate(1)
 
-    def generate_trajectory(self, start, goal, num=50):
+    def generate_trajectory(self, start: tuple, goal: tuple, num: int = 50):
+        assert type(start) == tuple, 'Start position should be a tuple'
+        assert type(goal) == tuple, 'Goal position should be a tuple'
+        assert type(num) == int, 'Num should be an integer'
+
         trajectory = np.empty((0, 2))
         x = np.linspace(start[0], goal[0], num)
         y = np.linspace(start[1], goal[1], num)
@@ -44,7 +48,12 @@ class NODE_1:
             # update index
             idx += 1
             if idx >= len(self.trajectory):
+                rospy.loginfo("Robot is at goal: {}".format(new_pose))
                 break
+
+        while rospy.is_shutdown():
+            rospy.loginfo("Hard shutdown")
+            break
 
 
 

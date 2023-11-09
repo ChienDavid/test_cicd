@@ -14,24 +14,34 @@ class NODE_1:
         self.pub_robot = rospy.Publisher('/robotpose', Pose, queue_size=10)
         self.rate = rospy.Rate(1)
 
-    def generate_trajectory(self, start, goal):
+    def generate_trajectory(self, start, goal, num=50):
         trajectory = np.empty((0, 2))
-        x = np.linspace(start[0], goal[0], 50)
-        y = np.linspace(start[1], goal[1], 50)
+        x = np.linspace(start[0], goal[0], num)
+        y = np.linspace(start[1], goal[1], num)
         for (xi, yi) in zip(x, y):
             trajectory = np.vstack((trajectory, (xi, yi)))
         return trajectory
 
     def execuse(self):
-        self.trajectory = self.generate_trajectory(self.start, self.goal)
+        # generate trajectory
+        self.trajectory = self.generate_trajectory(self.start, self.goal, num=10)
+
+        # start execute
         idx = 0
         while not rospy.is_shutdown():
+            # extract a new pose
             new_pose = self.trajectory[idx]
             self.robot.position.x = new_pose[0]
             self.robot.position.y = new_pose[1]
+
+            # publish the pose
             self.pub_robot.publish(self.robot)
             rospy.loginfo("Published pose {}: {}".format(idx, new_pose))
+
+            # sleep
             self.rate.sleep()
+
+            # update index
             idx += 1
             if idx >= len(self.trajectory):
                 break

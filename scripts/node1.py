@@ -14,7 +14,7 @@ class NODE_1:
         self.pub_robot = rospy.Publisher('/robotpose', Pose, queue_size=10)
         self.rate = rospy.Rate(1)
 
-    def generate_trajectory(self, start: tuple, goal: tuple, num: int = 50):
+    def generate_trajectory(self, start: tuple, goal: tuple, num: int = 5):
         assert type(start) == tuple, 'Start position should be a tuple'
         assert type(goal) == tuple, 'Goal position should be a tuple'
         assert type(num) == int, 'Num should be an integer'
@@ -28,7 +28,7 @@ class NODE_1:
 
     def execuse(self):
         # generate trajectory
-        self.trajectory = self.generate_trajectory(self.start, self.goal, num=10)
+        self.trajectory = self.generate_trajectory(self.start, self.goal)
 
         # start execute
         idx = 0
